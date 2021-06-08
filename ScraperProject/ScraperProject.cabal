@@ -7,10 +7,10 @@ cabal-version: 1.12
 name:           ScraperProject
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/ScraperProject#readme>
-homepage:       https://github.com/githubuser/ScraperProject#readme
-bug-reports:    https://github.com/githubuser/ScraperProject/issues
-author:         Author name here
-maintainer:     example@example.com
+homepage:       https://github.com/grochowskih/hs-scraper#readme
+bug-reports:    https://github.com/grochowskih/hs-scraper/issues
+author:         HG
+maintainer:     HG
 copyright:      2021 Author name here
 license:        BSD3
 license-file:   LICENSE
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/ScraperProject
+  location: https://github.com/grochowskih/hs-scraper
 
 library
   exposed-modules:
@@ -35,6 +35,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , mysql-simple
     , scalpel
     , text
   default-language: Haskell2010
@@ -50,6 +51,7 @@ executable ScraperProject-exe
       ScraperProject
     , aeson
     , base >=4.7 && <5
+    , mysql-simple
     , scalpel
     , text
   default-language: Haskell2010
@@ -66,6 +68,7 @@ test-suite ScraperProject-test
       ScraperProject
     , aeson
     , base >=4.7 && <5
+    , mysql-simple
     , scalpel
     , text
   default-language: Haskell2010

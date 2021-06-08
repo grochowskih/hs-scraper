@@ -1,9 +1,9 @@
 name:                ScraperProject
 version:             0.1.0.0
-github:              "githubuser/ScraperProject"
+github:              "grochowskih/hs-scraper"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
+author:              "HG"
+maintainer:          "HG"
 copyright:           "2021 Author name here"
 
 extra-source-files:
@@ -24,6 +24,7 @@ dependencies:
 - scalpel
 - aeson
 - text
+- mysql-simple
 # - gi-gtk
 
 library:
