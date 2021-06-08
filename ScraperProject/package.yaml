@@ -24,7 +24,8 @@ dependencies:
 - scalpel
 - aeson
 - text
-- mysql-simple
+- mysql-haskell
+- io-streams
 # - gi-gtk
 
 library:
