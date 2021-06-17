@@ -16,4 +16,4 @@ main :: IO ()
 --    case res of 
 --        Just toShow -> print toShow
 --        Nothing -> undefined
-main = testConnect
+main = testConnect >>= getOffers

@@ -28,7 +28,6 @@ library
       Backend.DAO
       Backend.JsonHandler
       Backend.Scraper
-      Backend.StateHandler
   other-modules:
       Paths_ScraperProject
   hs-source-dirs:
@@ -36,6 +35,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , int
     , io-streams
     , mysql-haskell
     , scalpel
@@ -53,6 +53,7 @@ executable ScraperProject-exe
       ScraperProject
     , aeson
     , base >=4.7 && <5
+    , int
     , io-streams
     , mysql-haskell
     , scalpel
@@ -71,6 +72,7 @@ test-suite ScraperProject-test
       ScraperProject
     , aeson
     , base >=4.7 && <5
+    , int
     , io-streams
     , mysql-haskell
     , scalpel
