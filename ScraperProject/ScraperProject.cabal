@@ -26,20 +26,26 @@ source-repository head
 library
   exposed-modules:
       Backend.DAO
-      Backend.JsonHandler
+      Backend.DataModel
       Backend.Scraper
+      Backend.StateHandler
+      UI.WebUI
   other-modules:
       Paths_ScraperProject
   hs-source-dirs:
       src
   build-depends:
-      aeson
+      Spock
+    , Spock-lucid
+    , aeson
     , base >=4.7 && <5
-    , int
     , io-streams
+    , lucid
+    , mtl
     , mysql-haskell
     , scalpel
     , text
+    , transformers
   default-language: Haskell2010
 
 executable ScraperProject-exe
@@ -51,13 +57,17 @@ executable ScraperProject-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       ScraperProject
+    , Spock
+    , Spock-lucid
     , aeson
     , base >=4.7 && <5
-    , int
     , io-streams
+    , lucid
+    , mtl
     , mysql-haskell
     , scalpel
     , text
+    , transformers
   default-language: Haskell2010
 
 test-suite ScraperProject-test
@@ -70,11 +80,15 @@ test-suite ScraperProject-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       ScraperProject
+    , Spock
+    , Spock-lucid
     , aeson
     , base >=4.7 && <5
-    , int
     , io-streams
+    , lucid
+    , mtl
     , mysql-haskell
     , scalpel
     , text
+    , transformers
   default-language: Haskell2010

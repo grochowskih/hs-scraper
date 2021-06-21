@@ -1,10 +1,9 @@
-{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
-{-# OPTIONS_GHC -Wno-deferred-type-errors #-}
 module Main where
 
 import Backend.Scraper
 import Prelude
 import Backend.DAO
+import UI.WebUI
 
 main :: IO ()
 --main = do
@@ -16,4 +15,5 @@ main :: IO ()
 --    case res of 
 --        Just toShow -> print toShow
 --        Nothing -> undefined
-main = testConnect >>= getOffers
+main = createConnection >>= getOffers
+--main = runApp

@@ -24,8 +24,14 @@ dependencies:
 - scalpel
 - aeson
 - text
+- mtl
+- transformers
 - mysql-haskell
 - io-streams
+- Spock
+- lucid
+- Spock-lucid
+#- threepenny-gui
 # - gi-gtk
 
 library:
