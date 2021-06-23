@@ -15,5 +15,6 @@ main :: IO ()
 --    case res of 
 --        Just toShow -> print toShow
 --        Nothing -> undefined
-main = createConnection >>= getOffers
---main = runApp
+-- main = createConnection >>= getOffers
+
+main = runApp

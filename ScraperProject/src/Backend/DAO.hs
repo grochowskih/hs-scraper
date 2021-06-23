@@ -2,40 +2,49 @@
 module Backend.DAO where
 
 import Database.MySQL.Base
+import Database.MySQL.Connection
 import System.IO.Streams as Streams
 import Data.Int
 import Backend.Scraper
 import Data.Maybe
 import Data.Text
+import Control.Monad.IO.Class
+import Control.Monad.State.Strict
+import Backend.DataModel
+
+run :: (StateT MySQLConn IO) ()
+run = do
+    res <- liftIO createConnection
+    modify (\el -> res)
 
 createConnection :: IO MySQLConn 
 createConnection = do
     conn <- Database.MySQL.Base.connect
-        defaultConnectInfo {ciHost = "sql11.freesqldatabase.com", ciPort = 3306, ciUser = "sql11417464", ciPassword = "XDMEcWeuRp", ciDatabase = "sql11417464"}
+            defaultConnectInfo {ciHost = "sql11.freesqldatabase.com", ciPort = 3306, ciUser = "sql11417464", ciPassword = "XDMEcWeuRp", ciDatabase = "sql11417464"}
     putStrLn "Nawiazalem polaczenie"
     return conn
 
-getOffers :: MySQLConn -> IO [[String]]
+getOffers :: MySQLConn -> IO [[String]] -- IO [[MySQLValue]]
 getOffers conn = do
     (defs, is) <- query_ conn "SELECT * FROM offers"
-    --Streams.toList is
-    return $ Prelude.map (Prelude.map show) [[MySQLInt32 1,MySQLText "Test",MySQLText "155",MySQLText "OpisTestowy",MySQLText "100",MySQLText "200",MySQLText "100",MySQLText "200",MySQLText "1",MySQLText "2",MySQLInt8 0,MySQLInt8 1]]
+    result <- liftIO $ Streams.toList is 
+    return $ mappingValuesToList result
 
-getInterestingOffers :: MySQLConn -> IO ()
+getInterestingOffers :: MySQLConn -> IO [[String]] -- IO [[MySQLValue]]
 getInterestingOffers conn = do
     (defs, is) <- query_ conn "SELECT * FROM offers WHERE isInteresting = 1 "
-    putStrLn "Wykonalem selecta interesujacych"
-    print =<< Streams.toList is
+    result <- liftIO $ Streams.toList is 
+    return $ mappingValuesToList result
 
-setRecordIsRead :: MySQLConn -> Int -> IO ()
-setRecordIsRead conn id = do
+setRecordIsRead :: Int -> MySQLConn -> IO ()
+setRecordIsRead id conn = do
     s <- prepareStmt conn "UPDATE offers SET isRead = 1 WHERE ID = ?"
-    (defs, is) <- queryStmt conn s [MySQLInt32 (fromIntegral id)]
-    putStrLn $ "Oznaczylem rekord" ++ show id ++ " jako przeczytany"
-    print =<< Streams.toList is
+    putStrLn "Try to execute setRecordIsRead"
+    executeStmt conn s [MySQLInt32 (fromIntegral id)]
+    putStrLn $ "Set record with id = " ++ show id ++ " isRead"
 
-setRecordIsInteresting :: MySQLConn -> Int -> IO ()
-setRecordIsInteresting conn id = do
+setRecordIsInteresting :: Int -> MySQLConn -> IO ()
+setRecordIsInteresting id conn= do
     s <- prepareStmt conn "UPDATE offers SET isInteresting = 1 WHERE ID = ?"
     (defs, is) <- queryStmt conn s [MySQLInt32 (fromIntegral id)]
     putStrLn $ "Oznaczylem rekord " ++ show id ++ " jako interesujacy"

@@ -3,6 +3,7 @@ module Backend.Scraper where
 import Text.HTML.Scalpel
 
 import Data.Aeson ( object, KeyValue((.=)), ToJSON(toJSON) )
+import Data.Maybe
 
 data Offer = Offer {
     title :: String,
@@ -33,6 +34,9 @@ titles priceFrom priceTo flatFrom flatTo roomsFrom roomsTo = scrapeURL (buildUrl
         price <- text $ TagString "p"  @: [hasClass "single-result__price"]
         description <- text $ TagString "div" @: [hasClass "single-result__description"]
         return $ Offer title price description priceFrom priceTo flatFrom flatTo roomsFrom roomsTo
+
+correctOffers :: Maybe [Offer] -> IO [Offer]
+correctOffers arg = return $ fromMaybe [] arg
 
 buildPriceFrom :: Maybe String -> String
 buildPriceFrom val = case val of
@@ -66,3 +70,9 @@ buildRoomsTo val = case val of
 
 buildUrlScraper :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> String
 buildUrlScraper priceFrom priceTo flatFrom flatTo roomsFrom roomsTo = init $ baseURL ++ buildPriceFrom priceFrom ++ buildPriceTo priceTo ++ buildFlatFrom flatFrom ++ buildFlatTo flatTo ++ buildRoomsFrom roomsFrom ++ buildRoomsTo roomsTo
+
+fromInput :: String -> Maybe String
+fromInput x =
+    case x of 
+        "" -> Nothing
+        _ -> Just x
