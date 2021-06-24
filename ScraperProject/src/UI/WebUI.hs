@@ -28,7 +28,6 @@ runApp :: IO ()
 runApp = do
     let st = createInitState 
     cfg <- defaultSpockCfg () PCNoDatabase st
-    -- offers <- createConnection >>= getOffers
     runSpock 8080 (spock cfg app)
 
 app :: Server () -- SpockM () () AppScrapingState a
@@ -72,25 +71,34 @@ app = do
         flatTo <- param' "flatTo"
         roomsFrom <- param' "roomsFrom"
         roomsTo <- param' "roomsTo"
-        offers <- liftIO $ (titles (fromInput priceFrom) (fromInput priceTo) (fromInput flatFrom) (fromInput flatTo) (fromInput roomsFrom) (fromInput roomsTo)) >>= correctOffers
+        offers <- liftIO $ (titles (fromInput priceFrom) (fromInput priceTo) (fromInput flatFrom) (fromInput flatTo) (fromInput roomsFrom) (fromInput roomsTo)) >>= correctOffers >>= offersToDisplay
         lucid $ do 
             h1_ "Wynik scrapowania"
-            --table_ $ mapM (tr_ . toHtml) offers
+            table_ $ (tr_ . mapM (th_ . toHtml)) headersTable >> mapM (tr_ . mapM (td_ . toHtml) ) offers
     get "history" $ do
         offers <- liftIO $ createConnection  >>= getOffers
         lucid $ do 
             h1_ "Historia scrapowania"
             table_ $ (tr_ . mapM (th_ . toHtml)) headersTable >> mapM (tr_ . mapM (td_ . toHtml) ) offers
-            h3_ "Oznacz jako przeczytane:"
+            h3_ "Oznacz jako (nie)interesujące:"
             form_ [method_ "post"] $ do
-                p_ "Podaj ID ogłoszenia, które chcesz oznaczysz jako przeczytane."
+                p_ "Podaj ID i wykonaj akcję."
                 label_ $ do
                     "ID "
-                    input_ [name_ "idRead"]
-                input_ [type_ "submit", value_ "Oznacz jako przeczytane"]
-    post "history" $ do
-        inter <- param' "idRead"
-        liftIO $ createConnection >>= setRecordIsRead inter
+                    input_ [name_ "idInter"]
+                input_ [type_ "submit", value_ "Interesująca", formaction_ "/setinter"]
+                input_ [type_ "submit", value_ "Nienteresująca", formaction_ "/setnotinter"]
+    post "setinter" $ do
+        inter <- param "idInter"
+        case inter of
+            Just x -> liftIO $ createConnection >>= setRecordIsInteresting x
+            Nothing -> liftIO $ putStrLn "Parameter is no available" 
+        redirect "/history"
+    post "setnotinter" $ do
+        inter <- param "idInter"
+        case inter of
+            Just x -> liftIO $ createConnection >>= setRecordIsNotInteresting x
+            Nothing -> liftIO $ putStrLn "Parameter is no available"
         redirect "/history"
     get "inter" $ do
         offers <- liftIO $ createConnection  >>= getInterestingOffers

@@ -17,6 +17,18 @@ data Offer = Offer {
     roomsTo :: Maybe String
 }
 
+data DisplayOffer = DisplayOffer {
+    titleDisp :: String,
+    priceDisp :: String,
+    descriptionDisp :: String,
+    priceFromDisp :: String,
+    priceToDisp :: String,
+    flatFromDisp :: String,
+    flatToDisp :: String,
+    roomsFromDisp :: String,
+    roomsToDisp :: String
+}
+
 baseURL :: String
 baseURL = "https://www.morizon.pl/do-wynajecia/mieszkania/najnowsze/warszawa/?"
          
@@ -76,3 +88,12 @@ fromInput x =
     case x of 
         "" -> Nothing
         _ -> Just x
+
+offersToDisplay :: [Offer] -> IO [[String]]
+offersToDisplay offers = return $ map (offerToString . displayOffer) offers
+
+displayOffer :: Offer -> DisplayOffer
+displayOffer offer = DisplayOffer (title offer) (price offer) (description offer) (fromMaybe "" (priceFrom offer)) (fromMaybe "" (priceTo offer)) (fromMaybe "" (flatFrom offer)) (fromMaybe "" (flatTo offer)) (fromMaybe "" (roomsFrom offer)) (fromMaybe "" (roomsTo offer) )
+
+offerToString :: DisplayOffer -> [String]
+offerToString arg = [titleDisp arg, priceDisp arg, descriptionDisp arg, priceFromDisp arg, priceToDisp arg, flatFromDisp arg, flatToDisp arg, roomsFromDisp arg, roomsToDisp arg]

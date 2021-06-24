@@ -20,7 +20,6 @@ run = do
 createConnection :: IO MySQLConn 
 createConnection = do
     conn <- Database.MySQL.Base.connect
-            defaultConnectInfo {ciHost = "sql11.freesqldatabase.com", ciPort = 3306, ciUser = "sql11417464", ciPassword = "XDMEcWeuRp", ciDatabase = "sql11417464"}
     putStrLn "Nawiazalem polaczenie"
     return conn
 
@@ -46,9 +45,16 @@ setRecordIsRead id conn = do
 setRecordIsInteresting :: Int -> MySQLConn -> IO ()
 setRecordIsInteresting id conn= do
     s <- prepareStmt conn "UPDATE offers SET isInteresting = 1 WHERE ID = ?"
-    (defs, is) <- queryStmt conn s [MySQLInt32 (fromIntegral id)]
-    putStrLn $ "Oznaczylem rekord " ++ show id ++ " jako interesujacy"
-    print =<< Streams.toList is
+    putStrLn "Try to execute setRecordIsInteresting"
+    executeStmt conn s [MySQLInt32 (fromIntegral id)]
+    putStrLn $ "Set record with id = " ++ show id ++ " is interesting"
+
+setRecordIsNotInteresting :: Int -> MySQLConn -> IO ()
+setRecordIsNotInteresting id conn= do
+    s <- prepareStmt conn "UPDATE offers SET isInteresting = 0 WHERE ID = ?"
+    putStrLn "Try to execute setRecordIsInteresting"
+    executeStmt conn s [MySQLInt32 (fromIntegral id)]
+    putStrLn $ "Set record with id = " ++ show id ++ " is not interesting"
 
 addRecord :: MySQLConn -> Offer -> IO ()
 addRecord conn offer = do
