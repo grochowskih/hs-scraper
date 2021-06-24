@@ -65,16 +65,22 @@ app = do
                     input_ [name_ "roomsTo"]
                 input_ [type_ "submit", value_ "Wprowadź filtry", formaction_ "/results"]
     post "results" $ do 
+        conn <- liftIO createConnection
         priceFrom <- param' "priceFrom"
         priceTo <- param' "priceTo"
         flatFrom <- param' "flatFrom"
         flatTo <- param' "flatTo"
         roomsFrom <- param' "roomsFrom"
         roomsTo <- param' "roomsTo"
+        res <- liftIO $ titles (fromInput priceFrom) (fromInput priceTo) (fromInput flatFrom) (fromInput flatTo) (fromInput roomsFrom) (fromInput roomsTo) >>= correctOffers
+        liftIO $ Prelude.mapM (addRecord conn) res
         offers <- liftIO $ (titles (fromInput priceFrom) (fromInput priceTo) (fromInput flatFrom) (fromInput flatTo) (fromInput roomsFrom) (fromInput roomsTo)) >>= correctOffers >>= offersToDisplay
         lucid $ do 
             h1_ "Wynik scrapowania"
             table_ $ (tr_ . mapM (th_ . toHtml)) headersTable >> mapM (tr_ . mapM (td_ . toHtml) ) offers
+            form_ [method_ "get"] $ do
+                p_ "Aby wrócić do strony głównej naciśnij \"WSTECZ\""
+                input_ [type_ "submit", value_ "WSTECZ", formaction_ "/"]
     get "history" $ do
         offers <- liftIO $ createConnection  >>= getOffers
         lucid $ do 
@@ -88,6 +94,9 @@ app = do
                     input_ [name_ "idInter"]
                 input_ [type_ "submit", value_ "Interesująca", formaction_ "/setinter"]
                 input_ [type_ "submit", value_ "Nienteresująca", formaction_ "/setnotinter"]
+            form_ [method_ "get"] $ do
+                p_ "Aby wrócić do strony głównej naciśnij \"WSTECZ\""
+                input_ [type_ "submit", value_ "WSTECZ", formaction_ "/"]
     post "setinter" $ do
         inter <- param "idInter"
         case inter of
@@ -105,3 +114,6 @@ app = do
         lucid $ do 
             h1_ "Interesujące ogłoszenia"
             table_ $ (tr_ . mapM (th_ . toHtml)) headersTable >> mapM (tr_ . mapM (td_ . toHtml) ) offers
+            form_ [method_ "get"] $ do
+                p_ "Aby wrócić do strony głównej naciśnij \"WSTECZ\""
+                input_ [type_ "submit", value_ "WSTECZ", formaction_ "/"]
