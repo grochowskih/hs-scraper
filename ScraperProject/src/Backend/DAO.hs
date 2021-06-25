@@ -11,11 +11,13 @@ import Data.Text
 import Control.Monad.IO.Class
 import Control.Monad.State.Strict
 import Backend.DataModel
+import Data.Text.Encoding
 
 
-createConnection :: IO MySQLConn 
-createConnection = do
+createConnection :: String -> IO MySQLConn 
+createConnection val = do
     conn <- Database.MySQL.Base.connect
+            defaultConnectInfo {ciHost = "sql11.freesqldatabase.com", ciPort = 3306, ciUser = "sql11417464", ciPassword = (Data.Text.Encoding.encodeUtf8.pack) val, ciDatabase = "sql11417464"}
     putStrLn "Created connection with DB"
     return conn
 

@@ -31,8 +31,6 @@ dependencies:
 - Spock
 - lucid
 - Spock-lucid
-#- threepenny-gui
-# - gi-gtk
 
 library:
   source-dirs: src

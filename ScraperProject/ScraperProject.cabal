@@ -39,6 +39,7 @@ library
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
+    , directory
     , io-streams
     , lucid
     , mtl
@@ -61,6 +62,7 @@ executable ScraperProject-exe
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
+    , directory
     , io-streams
     , lucid
     , mtl
@@ -84,6 +86,7 @@ test-suite ScraperProject-test
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
+    , directory
     , io-streams
     , lucid
     , mtl

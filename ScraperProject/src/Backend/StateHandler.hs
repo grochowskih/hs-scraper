@@ -4,12 +4,21 @@ import Backend.Scraper
 import Database.MySQL.Base
 import Backend.DAO
 import Control.Monad.Trans.State.Strict
-import Data.IORef
+import System.IO
+-- import System.Directory
+
 
 type AppScrapingState = IO MySQLConn
 
---executeScrapping :: (StateT AppState IO) [Offer]
---executeScrapping = do 
-
 createInitState :: AppScrapingState
-createInitState = createConnection
+createInitState = getPassword >>= createConnection
+
+getPasswordFromFile :: Handle -> IO String
+getPasswordFromFile handle = do
+    val <- hGetLine handle
+    putStrLn val
+    return val
+
+getPassword :: IO String
+getPassword = do
+    withFile "resources/password.txt" ReadMode getPasswordFromFile
