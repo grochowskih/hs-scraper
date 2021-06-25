@@ -13,7 +13,7 @@ import Control.Monad.State.Strict
 import Backend.DataModel
 import Data.Text.Encoding
 
-
+-- |Generuje połączenie z bazą danych na podstawie argumentu, który przechowuje hasło.
 createConnection :: String -> IO MySQLConn 
 createConnection val = do
     conn <- Database.MySQL.Base.connect
@@ -21,6 +21,7 @@ createConnection val = do
     putStrLn "Created connection with DB"
     return conn
 
+-- |Pobiera wszystkie oferty obecnie znajdujące się w tabeli w bazie danych.
 getOffers :: MySQLConn -> IO [[String]] -- IO [[MySQLValue]]
 getOffers conn = do
     putStrLn $ "Try to execute select all offers"
@@ -29,6 +30,7 @@ getOffers conn = do
     putStrLn "Executed select all offers"
     return $ mappingValuesToList result
 
+-- |Pobiera wszystkie interesujące oferty obecnie znajdujące się w tabeli w bazie danych.
 getInterestingOffers :: MySQLConn -> IO [[String]] -- IO [[MySQLValue]]
 getInterestingOffers conn = do
     putStrLn $ "Try to execute select all interesting offers"
@@ -37,6 +39,7 @@ getInterestingOffers conn = do
     putStrLn "Executed select all interestinv offers"
     return $ mappingValuesToList result
 
+-- |Zmienia status wiadomości o danym ID na przeczytaną.
 setRecordIsRead :: Int -> MySQLConn -> IO ()
 setRecordIsRead id conn = do
     putStrLn "Try to execute setRecordIsRead"
@@ -44,6 +47,7 @@ setRecordIsRead id conn = do
     executeStmt conn s [MySQLInt32 (fromIntegral id)]
     putStrLn $ "Set record with id = " ++ show id ++ " isRead"
 
+-- |Zmienia status wiadomości o danym ID na nieprzeczytaną.
 setRecordIsNotRead :: Int -> MySQLConn -> IO ()
 setRecordIsNotRead id conn = do
     putStrLn "Try to execute setRecordIsNotRead"
@@ -51,6 +55,7 @@ setRecordIsNotRead id conn = do
     executeStmt conn s [MySQLInt32 (fromIntegral id)]
     putStrLn $ "Set record with id = " ++ show id ++ " is not Read"
 
+-- |Zmienia status wiadomości o danym ID na interesującą.
 setRecordIsInteresting :: Int -> MySQLConn -> IO ()
 setRecordIsInteresting id conn= do
     putStrLn "Try to execute setRecordIsInteresting"
@@ -58,6 +63,7 @@ setRecordIsInteresting id conn= do
     executeStmt conn s [MySQLInt32 (fromIntegral id)]
     putStrLn $ "Set record with id = " ++ show id ++ " is interesting"
 
+-- |Zmienia status wiadomości o danym ID na nieinteresującą.
 setRecordIsNotInteresting :: Int -> MySQLConn -> IO ()
 setRecordIsNotInteresting id conn= do
     putStrLn "Try to execute setRecordIsInteresting"
@@ -65,6 +71,7 @@ setRecordIsNotInteresting id conn= do
     executeStmt conn s [MySQLInt32 (fromIntegral id)]
     putStrLn $ "Set record with id = " ++ show id ++ " is not interesting"
 
+-- |Wstawia rekord do bazy danych do odpowiedniej tabeli.
 addRecord ::  MySQLConn -> [String] -> IO ()
 addRecord conn offer = do
     putStrLn "Try to add record"
@@ -72,5 +79,6 @@ addRecord conn offer = do
     executeStmt conn s ( Prelude.map (MySQLText . pack) offer++[MySQLInt8 0, MySQLInt8 0] )
     putStrLn $ "AddRecord with offer " ++ show (Prelude.head offer) ++ " success"
 
+-- |Wstawia wszystkie rekordy z danej listy do bazy danych wykorzystując funkcję addRecord.
 addAllRecords :: [[String]] ->  MySQLConn -> IO [()]
 addAllRecords offers conn = Prelude.mapM (addRecord conn) offers

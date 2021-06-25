@@ -21,21 +21,26 @@ import Control.Exception
 type Server a = SpockM () () AppScrapingState a
 data SetType = Interesting | NotInteresting | Read | NotRead
 
+-- |Funkcjonalności dostępne w aplikacji.
 functions :: [String]
 functions = ["Uruchomienie scrapowania (z możliwością określenia filtrów)", "Wyświetlenie historii wyszukiwań", "Oznaczenie oferty jako (nie)przeczytanej/jako (nie)interesującej" , "Wyświetlenie ofert oznaczonych jako interesujące"]
 
+-- |Nagłówki do tabeli z bazy danych.
 headersTable :: [String]
 headersTable = ["ID", "Tytuł ogłoszenia", "Cena", "Opis", "CenaOd", "CenaDo", "PowOd", "PowDo", "PokojeOd", "PokojeDo", "Przeczytane", "Interesująca"]
 
+-- |Nagłówki do tabeli z wynikami scrapowania.
 scrapingTable :: [String]
 scrapingTable = ["Tytuł ogłoszenia", "Cena", "Opis", "CenaOd", "CenaDo", "PowOd", "PowDo", "PokojeOd", "PokojeDo"]
 
+-- |Uruchomienie aplikacji.
 runApp :: IO ()
 runApp = do
     let st = createInitState 
     cfg <- defaultSpockCfg () PCNoDatabase st
     runSpock 8080 (spock cfg app)
 
+-- |Obsługa web.
 app :: Server () -- SpockM () () AppScrapingState a
 app = do
     get root $ lucid $ do
@@ -80,16 +85,19 @@ app = do
         offers <- liftIO $ catch (liftIO $ conn  >>= getInterestingOffers) handlingErrorDisplay
         lucid $ displayTable "Interesujące ogłoszenia" offers >> moveToMain
 
+-- |Wyświetlenie tabeli na stronie.
 displayTable :: Text -> [[String]] -> Html [[()]]
 displayTable header toDisplay = do
     h1_ (toHtml header)
     table_ $ (tr_ . mapM (th_ . toHtml)) headersTable >> mapM (tr_ . mapM (td_ . toHtml) ) toDisplay
 
+-- |Przeniesienie do strony głównej.
 moveToMain :: Html ()
 moveToMain = form_ [method_ "get"] $ do
     p_ "Aby wrócić do strony głównej naciśnij \"WSTECZ\""
     input_ [type_ "submit", value_ "WSTECZ", formaction_ "/"]
 
+-- |Ustawianie oferty na (nie)interesującą.
 interestingOffers :: Html()
 interestingOffers = form_ [method_ "post"] $ do
     p_ "Podaj ID i wykonaj akcję."
@@ -99,6 +107,7 @@ interestingOffers = form_ [method_ "post"] $ do
     input_ [type_ "submit", value_ "Interesująca", formaction_ "/setinter"]
     input_ [type_ "submit", value_ "Nienteresująca", formaction_ "/setnotinter"]
 
+-- |Ustawianie oferty na (nie)przeczytaną.
 readOffers :: Html()
 readOffers = form_ [method_ "post"] $ do
     p_ "Podaj ID i wykonaj akcję."
@@ -109,13 +118,13 @@ readOffers = form_ [method_ "post"] $ do
         input_ [type_ "submit", value_ "Nieprzeczytana", formaction_ "/setnotread"]
 
 
-
+-- |Zmienienie statusu wiadomości.
 changeRecordStatus :: SetType -> SpockActionCtx () () () AppScrapingState ()
 changeRecordStatus NotInteresting = do
     inter <- param "idInter"
     conn <- getState 
     case inter of
-        Just x -> liftIO $ catch (liftIO conn >>= setRecordIsInteresting x) handlingError
+        Just x -> liftIO $ catch (liftIO conn >>= setRecordIsNotInteresting x) handlingError
         Nothing -> liftIO $ putStrLn "Parameter is no available"
     redirect "/history"
 
@@ -143,6 +152,7 @@ changeRecordStatus NotRead = do
         Nothing -> liftIO $ putStrLn "Parameter is no available"
     redirect "/history"
 
+-- |Utworzenie filtrów przez użytkownika do scrapowania.
 createFilters :: Html ()
 createFilters = form_ [method_ "post"] $ do
     p_ "Podaj filtry, które chcesz zdefiniować."
@@ -166,18 +176,21 @@ createFilters = form_ [method_ "post"] $ do
         input_ [name_ "roomsTo"]
     input_ [type_ "submit", value_ "Szukaj", formaction_ "/results"]
 
+-- |Obsłużenie wychwycenia błędu ze znalezieniem się w odpowiedniej monadzie na wyjściu.
 handlingErrorInsert :: SomeException -> IO [()]
 handlingErrorInsert e = do 
     let err = show (e :: SomeException)
     putStrLn $ "Catch error " ++ err
     return []
 
+-- |Obsłużenie wychwycenia błędu ze znalezieniem się w odpowiedniej monadzie na wyjściu.
 handlingErrorDisplay :: SomeException -> IO [[String]]
 handlingErrorDisplay e = do 
     let err = show (e :: SomeException)
     putStrLn $ "Catch error " ++ err
     return [["Nie udało się pobrać rekordów"]]
 
+-- |Obsłużenie wychwycenia błędu ze znalezieniem się w odpowiedniej monadzie na wyjściu.
 handlingError :: SomeException -> IO ()
 handlingError e = do 
     let err = show (e :: SomeException)
