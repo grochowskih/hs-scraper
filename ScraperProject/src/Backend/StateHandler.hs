@@ -6,10 +6,10 @@ import Backend.DAO
 import Control.Monad.Trans.State.Strict
 import Data.IORef
 
-newtype AppScrapingState = AppScrapingState (IO MySQLConn, [Offer])
+type AppScrapingState = IO MySQLConn
 
 --executeScrapping :: (StateT AppState IO) [Offer]
 --executeScrapping = do 
 
 createInitState :: AppScrapingState
-createInitState = AppScrapingState (createConnection, [])
+createInitState = createConnection
