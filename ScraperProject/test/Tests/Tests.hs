@@ -62,12 +62,12 @@ prop_buildFlatTo arg = case arg of
 
 prop_buildRoomsFrom :: Maybe String -> Bool
 prop_buildRoomsFrom arg = case arg of
-    Just x -> (buildRoomsFrom arg) == "?ps%5Bnumber_of_rooms_from%5D=" ++ x ++ "&"
+    Just x -> (buildRoomsFrom arg) == "ps%5Bnumber_of_rooms_from%5D=" ++ x ++ "&"
     Nothing -> (buildRoomsFrom arg) == ""
 
 prop_buildRoomsTo :: Maybe String -> Bool
 prop_buildRoomsTo arg = case arg of
-    Just x -> (buildRoomsTo arg) == "?ps%5Bnumber_of_rooms_to%5D=" ++ x ++ "&"
+    Just x -> (buildRoomsTo arg) == "ps%5Bnumber_of_rooms_to%5D=" ++ x ++ "&"
     Nothing -> (buildRoomsTo arg) == ""
 
 prop_correctOffers :: Maybe [Offer] -> Property
