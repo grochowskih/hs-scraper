@@ -39,7 +39,6 @@ library
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
-    , directory
     , io-streams
     , lucid
     , mtl
@@ -62,7 +61,6 @@ executable ScraperProject-exe
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
-    , directory
     , io-streams
     , lucid
     , mtl
@@ -76,17 +74,18 @@ test-suite ScraperProject-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Tests.Tests
       Paths_ScraperProject
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      ScraperProject
+      QuickCheck
+    , ScraperProject
     , Spock
     , Spock-lucid
     , aeson
     , base >=4.7 && <5
-    , directory
     , io-streams
     , lucid
     , mtl

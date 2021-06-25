@@ -31,7 +31,7 @@ data DisplayOffer = DisplayOffer {
 
 baseURL :: String
 baseURL = "https://www.morizon.pl/do-wynajecia/mieszkania/najnowsze/warszawa/?"
-         
+
 instance Show Offer where
     show (Offer title price description _ _ _ _ _ _) = "Title: " ++ show title ++ " | Price: " ++ show price ++ " | Description : " ++ show description ++ " \n"
 

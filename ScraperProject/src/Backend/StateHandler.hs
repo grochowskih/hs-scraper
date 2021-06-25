@@ -16,7 +16,6 @@ createInitState = getPassword >>= createConnection
 getPasswordFromFile :: Handle -> IO String
 getPasswordFromFile handle = do
     val <- hGetLine handle
-    putStrLn val
     return val
 
 getPassword :: IO String
